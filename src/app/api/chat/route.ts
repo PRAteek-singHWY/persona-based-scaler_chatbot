@@ -23,8 +23,8 @@ export async function POST(request: Request) {
 
     // Prepend the system prompt to the messages
     const apiMessages = [
-      { role: 'system', content: persona.systemPrompt },
-      ...messages.map((m: { role: string; content: string }) => ({
+      { role: 'system' as const, content: persona.systemPrompt },
+      ...messages.map((m: { role: 'user' | 'assistant' | 'system'; content: string }) => ({
         role: m.role,
         content: m.content,
       })),
