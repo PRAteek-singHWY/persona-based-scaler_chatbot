@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Menu, Plus, MessageSquare, Sparkles, X } from 'lucide-react';
 import styles from './page.module.css';
 import { personas, PersonaId } from './lib/prompts';
 
@@ -17,6 +17,7 @@ export default function Home() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatAreaRef = useRef<HTMLDivElement>(null);
 
   const persona = personas[activePersona];
@@ -34,6 +35,15 @@ export default function Home() {
     setMessages([]); // Reset conversation on persona switch
     setError('');
     setInput('');
+    setSidebarOpen(false);
+  };
+
+  const handleNewChat = () => {
+    if (isLoading) return;
+    setMessages([]);
+    setError('');
+    setInput('');
+    setSidebarOpen(false);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -92,84 +102,122 @@ export default function Home() {
   };
 
   return (
-    <main className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Scaler Mentor Chatbot</h1>
-        <p className={styles.subtitle}>Powered by Groq & Llama 3</p>
-      </header>
-
-      <div className={styles.personaSwitcher}>
-        {(Object.keys(personas) as PersonaId[]).map((id) => (
-          <button
-            key={id}
-            className={`${styles.personaBtn} ${activePersona === id ? styles.personaBtnActive : ''}`}
-            onClick={() => handlePersonaChange(id)}
-            disabled={isLoading}
-          >
-            {personas[id].name}
-          </button>
-        ))}
-      </div>
-
-      <div className={styles.chatArea} ref={chatAreaRef}>
-        {messages.length === 0 ? (
-          <div className={styles.personaIntro}>
-            <h2>Chat with {persona.name}</h2>
-            <p>{persona.role}</p>
-            <p style={{ marginTop: '10px', fontSize: '0.9rem' }}>{persona.description}</p>
-            
-            <div className={styles.suggestions}>
-              {persona.suggestions.map((suggestion, idx) => (
-                <button 
-                  key={idx} 
-                  className={styles.suggestionChip}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
+    <main className={styles.appContainer}>
+      <div 
+        className={`${styles.sidebarOverlay} ${sidebarOpen ? styles.open : ''}`} 
+        onClick={() => setSidebarOpen(false)} 
+      />
+      
+      <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
+        <div className={styles.sidebarHeader}>
+          <div className={styles.brand}>
+            <Sparkles className={styles.brandIcon} />
+            <h2>Scaler AI</h2>
           </div>
-        ) : (
-          messages.map((m) => (
-            <div 
-              key={m.id} 
-              className={`${styles.messageWrapper} ${m.role === 'user' ? styles.messageWrapperUser : styles.messageWrapperAi}`}
+          <button className={styles.closeSidebarBtn} onClick={() => setSidebarOpen(false)}>
+            <X size={20} />
+          </button>
+        </div>
+        
+        <button className={styles.newChatBtn} onClick={handleNewChat} disabled={isLoading}>
+          <Plus size={18} /> New Chat
+        </button>
+
+        <div className={styles.personaList}>
+          <h3 className={styles.sidebarTitle}>Select Mentor</h3>
+          {(Object.keys(personas) as PersonaId[]).map((id) => (
+            <button
+              key={id}
+              className={`${styles.personaCard} ${activePersona === id ? styles.personaCardActive : ''}`}
+              onClick={() => handlePersonaChange(id)}
+              disabled={isLoading}
             >
-              <div className={`${styles.message} ${m.role === 'user' ? styles.messageUser : styles.messageAi}`}>
-                {m.content}
+              <div className={styles.personaAvatar}>{personas[id].name.charAt(0)}</div>
+              <div className={styles.personaInfo}>
+                <span className={styles.personaName}>{personas[id].name}</span>
+                <span className={styles.personaRole}>{personas[id].role.split(',')[0]}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      <section className={styles.mainContent}>
+        <header className={styles.mobileHeader}>
+          <button className={styles.menuBtn} onClick={() => setSidebarOpen(true)}>
+            <Menu size={24} />
+          </button>
+          <h2>{persona.name}</h2>
+          <div style={{ width: 24 }} /> {/* Spacer for balance */}
+        </header>
+
+        <div className={styles.chatArea} ref={chatAreaRef}>
+          {messages.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyAvatar}>{persona.name.charAt(0)}</div>
+              <h1>{persona.name}</h1>
+              <p>{persona.description}</p>
+              
+              <div className={styles.suggestionsGrid}>
+                {persona.suggestions.map((suggestion, idx) => (
+                  <button 
+                    key={idx} 
+                    className={styles.suggestionCard}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    <MessageSquare size={16} className={styles.suggestionIcon} />
+                    <span>{suggestion}</span>
+                  </button>
+                ))}
               </div>
             </div>
-          ))
-        )}
-
-        {isLoading && (
-          <div className={`${styles.messageWrapper} ${styles.messageWrapperAi}`}>
-            <div className="typing-indicator">
-              <div className="typing-dot"></div>
-              <div className="typing-dot"></div>
-              <div className="typing-dot"></div>
+          ) : (
+            <div className={styles.messagesContainer}>
+              {messages.map((m) => (
+                <div 
+                  key={m.id} 
+                  className={`${styles.messageRow} ${m.role === 'user' ? styles.rowUser : styles.rowAi}`}
+                >
+                  <div className={`${styles.messageBubble} ${m.role === 'user' ? styles.bubbleUser : styles.bubbleAi}`}>
+                    {m.content}
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className={`${styles.messageRow} ${styles.rowAi}`}>
+                  <div className={`${styles.messageBubble} ${styles.bubbleAi} ${styles.typingBubble}`}>
+                    <div className="typing-indicator" style={{boxShadow: 'none', background: 'transparent', padding: '8px 12px', border: 'none'}}>
+                      <div className="typing-dot"></div>
+                      <div className="typing-dot"></div>
+                      <div className="typing-dot"></div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <div className={styles.inputArea}>
-        {error && <div className={styles.error}>{error}</div>}
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <input
-            type="text"
-            className={styles.input}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={`Ask ${persona.name.split(' ')[0]} a question...`}
-            disabled={isLoading}
-          />
-          <button type="submit" className={styles.sendBtn} disabled={isLoading || !input.trim()}>
-            <Send size={18} />
-          </button>
-        </form>
-      </div>
+        <div className={styles.inputContainer}>
+          <div className={styles.inputWrapper}>
+             {error && <div className={styles.errorBanner}>{error}</div>}
+             <form onSubmit={handleSubmit} className={styles.form}>
+               <input 
+                 type="text" 
+                 className={styles.input} 
+                 value={input} 
+                 onChange={(e) => setInput(e.target.value)} 
+                 placeholder={`Message ${persona.name.split(' ')[0]}...`} 
+                 disabled={isLoading} 
+               />
+               <button type="submit" className={styles.sendBtn} disabled={isLoading || !input.trim()}>
+                 <Send size={18} />
+               </button>
+             </form>
+             <p className={styles.footerDisclaimer}>AI can make mistakes. Verify important information.</p>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
