@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     // Prepend the system prompt to the messages
     const apiMessages = [
       { role: 'system', content: persona.systemPrompt },
-      ...messages.map((m: any) => ({
+      ...messages.map((m: { role: string; content: string }) => ({
         role: m.role,
         content: m.content,
       })),
@@ -42,10 +42,11 @@ export async function POST(request: Request) {
     return NextResponse.json({
       message: chatCompletion.choices[0]?.message?.content || '',
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Groq API Error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred during the API request.';
     return NextResponse.json(
-      { error: error.message || 'An error occurred during the API request.' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

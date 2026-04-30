@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, User } from 'lucide-react';
+import { Send } from 'lucide-react';
 import styles from './page.module.css';
 import { personas, PersonaId } from './lib/prompts';
 
@@ -79,9 +79,13 @@ export default function Home() {
       };
 
       setMessages(prev => [...prev, aiMsg]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || 'An error occurred while communicating with the API.');
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An error occurred while communicating with the API.');
+      }
     } finally {
       setIsLoading(false);
     }
