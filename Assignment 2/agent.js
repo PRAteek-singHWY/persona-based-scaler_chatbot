@@ -27,7 +27,7 @@ import { getScalerTemplate } from "./tools/scalerTemplates.js";
 
 // ─── Groq client (OpenAI-compatible) ─────────────────────────────────────────
 const client = new OpenAI({
-  apiKey:  process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY,
   baseURL: "https://api.groq.com/openai/v1",
 });
 
@@ -75,12 +75,12 @@ RULES:
 
 // ─── Render a step to the terminal ───────────────────────────────────────────
 function renderStep(parsed) {
-  const icons  = { START: "🚀", THINK: "🧠", TOOL: "🔧", OBSERVE: "👀", OUTPUT: "✅" };
+  const icons = { START: "🚀", THINK: "🧠", TOOL: "🔧", OBSERVE: "👀", OUTPUT: "✅" };
   const colors = {
     START: chalk.cyan, THINK: chalk.yellow,
     TOOL: chalk.magenta, OBSERVE: chalk.blue, OUTPUT: chalk.green,
   };
-  const icon  = icons[parsed.step]  || "•";
+  const icon = icons[parsed.step] || "•";
   const color = colors[parsed.step] || chalk.white;
 
   console.log();
@@ -99,18 +99,18 @@ function renderStep(parsed) {
 
 // ─── Extract first valid JSON object from raw string ─────────────────────────
 function parseAgentJSON(raw) {
-  const text  = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+  const text = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
   const start = text.indexOf("{");
   if (start === -1) throw new Error("No JSON object found");
 
   let depth = 0, inString = false, escaped = false, end = -1;
   for (let i = start; i < text.length; i++) {
     const ch = text[i];
-    if (escaped)     { escaped = false; continue; }
-    if (ch === "\\") { escaped = true;  continue; }
-    if (ch === '"')  { inString = !inString; continue; }
-    if (inString)    continue;
-    if (ch === "{")  depth++;
+    if (escaped) { escaped = false; continue; }
+    if (ch === "\\") { escaped = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === "{") depth++;
     if (ch === "}") { depth--; if (depth === 0) { end = i; break; } }
   }
   if (end === -1) throw new Error("Incomplete JSON object");
@@ -121,7 +121,7 @@ function parseAgentJSON(raw) {
 async function runAgent(userMessage) {
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
-    { role: "user",   content: userMessage   },
+    { role: "user", content: userMessage },
   ];
 
   console.log();
@@ -129,9 +129,9 @@ async function runAgent(userMessage) {
   console.log(chalk.bold.whiteBright("  ScalerBot Agent Starting…"));
   console.log(chalk.bold.whiteBright("━".repeat(60)));
 
-  const spinner     = ora({ text: "Thinking…", color: "cyan" });
-  const MAX_ITER    = 30;
-  let   iteration   = 0;
+  const spinner = ora({ text: "Thinking…", color: "cyan" });
+  const MAX_ITER = 30;
+  let iteration = 0;
 
   // Accumulate HTML sections fetched via getScalerTemplate
   const sections = {};
@@ -143,10 +143,10 @@ async function runAgent(userMessage) {
     let raw;
     try {
       const response = await client.chat.completions.create({
-        model:       "llama-3.3-70b-versatile",
+        model: "llama-3.1-8b-instant",
         messages,
         temperature: 0.1,
-        max_tokens:  1024,   // intentionally small — agent uses tools, not generation
+        max_tokens: 1024,   // intentionally small — agent uses tools, not generation
       });
       raw = response.choices[0].message.content.trim();
     } catch (err) {
@@ -191,7 +191,7 @@ async function runAgent(userMessage) {
         messages.push({
           role: "user",
           content: JSON.stringify({
-            step:    "OBSERVE",
+            step: "OBSERVE",
             content: `Tool "${parsed.tool_name}" not found. Available: ${Object.keys(TOOL_MAP).join(", ")}`,
           }),
         });
@@ -236,7 +236,7 @@ async function runAgent(userMessage) {
 
       // If we have all sections, assemble the final file now
       const needed = ["styles", "header", "hero", "features", "footer", "scripts"];
-      const have   = needed.filter(s => sections[s]);
+      const have = needed.filter(s => sections[s]);
       if (have.length === needed.length) {
         const html = `<!DOCTYPE html>
 <html lang="en">
