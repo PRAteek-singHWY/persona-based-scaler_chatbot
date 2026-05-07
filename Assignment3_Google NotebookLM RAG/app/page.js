@@ -103,10 +103,10 @@ export default function Home() {
         className="w-full max-w-6xl flex justify-between items-center mb-12"
       >
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-600 rounded-xl shadow-lg shadow-blue-500/20">
+          <div className="p-2 bg-emerald-600 rounded-xl shadow-lg shadow-emerald-500/20">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-yellow-400">
             NotebookLM RAG
           </h1>
         </div>
@@ -135,7 +135,7 @@ export default function Home() {
 
             <div 
               className={`relative border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all ${
-                file ? "border-blue-500/50 bg-blue-500/5" : "border-white/10 hover:border-white/20 hover:bg-white/5"
+                file ? "border-emerald-500/50 bg-emerald-500/5" : "border-white/10 hover:border-white/20 hover:bg-white/5"
               }`}
             >
               <input 
@@ -146,10 +146,10 @@ export default function Home() {
               />
               {file ? (
                 <div className="flex flex-col items-center gap-3">
-                  <div className="p-3 bg-blue-500/20 rounded-full">
-                    <FileText className="w-8 h-8 text-blue-400" />
+                  <div className="p-3 bg-emerald-500/20 rounded-full">
+                    <FileText className="w-8 h-8 text-emerald-400" />
                   </div>
-                  <span className="text-sm font-medium text-blue-300 max-w-[200px] truncate">{file.name}</span>
+                  <span className="text-sm font-medium text-emerald-300 max-w-[200px] truncate">{file.name}</span>
                   <button 
                     onClick={(e) => { e.stopPropagation(); setFile(null); setUploadStatus("idle"); }}
                     className="text-xs text-gray-500 hover:text-red-400 transition-colors"
@@ -175,10 +175,10 @@ export default function Home() {
               disabled={!file || uploadStatus === "uploading" || uploadStatus === "indexing" || uploadStatus === "success"}
               className={`w-full py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${
                 uploadStatus === "success" 
-                ? "bg-emerald-500/20 text-emerald-400 cursor-default"
+                ? "bg-yellow-500/20 text-yellow-400 cursor-default"
                 : !file || uploadStatus === "uploading" || uploadStatus === "indexing"
                 ? "bg-white/5 text-gray-500 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 active:scale-[0.98]"
+                : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 active:scale-[0.98]"
               }`}
             >
               {uploadStatus === "uploading" ? (

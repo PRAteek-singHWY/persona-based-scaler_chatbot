@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0a0b;
+  --color-background: #060806;
   --color-foreground: #ededed;
-  --color-primary: #3b82f6;
-  --color-secondary: #8b5cf6;
-  --color-accent: #10b981;
+  --color-primary: #10b981;
+  --color-secondary: #facc15;
+  --color-accent: #84cc16;
 }
 
 :root {
-  --background: #0a0a0b;
+  --background: #060806;
   --foreground: #ededed;
 }
 
@@ -45,10 +45,10 @@ body {
   height: 100%;
   z-index: -1;
   background-image: 
-    radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-    radial-gradient(at 50% 0%, hsla(225,39%,30%,0.1) 0, transparent 50%), 
-    radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
-  background-color: #0a0a0b;
+    radial-gradient(at 0% 0%, hsla(145,30%,7%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(160,50%,30%,0.1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(60,60%,30%,0.1) 0, transparent 50%);
+  background-color: #060806;
 }
 
 /* Custom Scrollbar */

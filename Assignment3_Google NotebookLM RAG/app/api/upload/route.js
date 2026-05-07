@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
@@ -24,38 +23,44 @@ export async function POST(req) {
     await fs.writeFile(tempPath, buffer);
 
     // 1. Load and Parse
-    const loader = new PDFLoader(tempPath);
-    const rawDocs = await loader.load();
+    console.log("Loading PDF...");
+    const pdf = (await import("pdf-parse")).default;
+    const data = await pdf(buffer);
+    const text = data.text;
+    console.log(`PDF Parsed. Text length: ${text.length}`);
 
     // 2. Chunking
+    console.log("Splitting text...");
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
     });
-    const docs = await textSplitter.splitDocuments(rawDocs);
+    const docs = await textSplitter.createDocuments([text]);
+    console.log(`Text split into ${docs.length} chunks.`);
 
     // 3. Embeddings (Local - No OpenAI Key Needed)
+    console.log("Initializing local embeddings...");
     const { HuggingFaceTransformersEmbeddings } = await import("@langchain/community/embeddings/hf_transformers");
     const embeddings = new HuggingFaceTransformersEmbeddings({
       modelName: "Xenova/all-MiniLM-L6-v2",
     });
+    console.log("Embeddings initialized.");
 
     // 4. Vector Store (Qdrant)
+    console.log("Connecting to Qdrant...");
     const qdrantUrl = process.env.QDRANT_URL;
     const qdrantApiKey = process.env.QDRANT_API_KEY;
     const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-local";
 
-    // Ensure collection exists (optional with fromDocuments but good practice)
-    const client = new QdrantClient({
-        url: qdrantUrl,
-        apiKey: qdrantApiKey,
-    });
+    if (!qdrantUrl) throw new Error("QDRANT_URL is not set");
 
+    console.log(`Storing in collection: ${collectionName}`);
     await QdrantVectorStore.fromDocuments(docs, embeddings, {
       url: qdrantUrl,
       apiKey: qdrantApiKey,
       collectionName: collectionName,
     });
+    console.log("Indexing completed.");
 
     // Cleanup temp file
     await fs.unlink(tempPath);
