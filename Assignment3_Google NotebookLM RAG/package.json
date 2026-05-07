@@ -1,0 +1,29 @@
+{
+  "name": "google-notebooklm-rag",
+  "version": "0.1.0",
+  "description": "A RAG-powered application where a user can upload any document and have a conversation with it.",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@langchain/groq": "^1.2.0",
+    "next": "16.2.5",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.0-canary.72",
+    "tailwindcss": "^4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PRAteek-singHWY/persona-based-scaler_chatbot.git"
+  },
+  "homepage": "https://github.com/PRAteek-singHWY/persona-based-scaler_chatbot/tree/main/Assignment3_Google%20NotebookLM%20RAG#readme"
+}
