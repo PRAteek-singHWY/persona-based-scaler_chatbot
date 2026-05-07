@@ -3,6 +3,9 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { OpenAI } from "openai";
 
+export const runtime = 'nodejs';
+export const maxDuration = 30;
+
 export async function POST(req) {
   try {
     const { message } = await req.json();
@@ -11,36 +14,39 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    // 1. Setup Vector Store
-    const { HuggingFaceTransformersEmbeddings } = await import("@langchain/community/embeddings/huggingface_transformers");
-    const embeddings = new HuggingFaceTransformersEmbeddings({
-      model: "Xenova/all-MiniLM-L6-v2",
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json({ error: 'OPENAI_API_KEY is not set' }, { status: 500 });
+    }
+    if (!process.env.GROQ_API_KEY) {
+      return NextResponse.json({ error: 'GROQ_API_KEY is not set' }, { status: 500 });
+    }
+
+    const embeddings = new OpenAIEmbeddings({
+      apiKey: process.env.OPENAI_API_KEY,
+      model: "text-embedding-3-small",
     });
 
     const qdrantUrl = process.env.QDRANT_URL;
     const qdrantApiKey = process.env.QDRANT_API_KEY;
-    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-local";
+    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-rag";
 
     const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
       url: qdrantUrl,
       apiKey: qdrantApiKey,
-      collectionName: collectionName,
+      collectionName,
     });
 
-    // 2. Retrieval
-    const retriever = vectorStore.asRetriever({
-      k: 5
-    });
-
+    const retriever = vectorStore.asRetriever({ k: 5 });
     const relevantDocs = await retriever.invoke(message);
 
-    // 3. Generation (Groq)
     const client = new OpenAI({
       apiKey: process.env.GROQ_API_KEY,
       baseURL: "https://api.groq.com/openai/v1",
     });
 
-    const context = relevantDocs.map(doc => `[Source: ${doc.metadata.source || 'Document'}, Page: ${doc.metadata.loc?.pageNumber || 'N/A'}]\n${doc.pageContent}`).join('\n\n');
+    const context = relevantDocs
+      .map(doc => `[Source: ${doc.metadata.source || 'Document'}, Page: ${doc.metadata.loc?.pageNumber || 'N/A'}]\n${doc.pageContent}`)
+      .join('\n\n');
 
     const systemPrompt = `You are a professional AI Assistant specialized in analyzing documents. Your goal is to answer the user's question based ONLY on the provided context.
 
@@ -57,19 +63,18 @@ ${context}`;
       model: "llama-3.3-70b-versatile",
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: message }
+        { role: "user", content: message },
       ],
       temperature: 0,
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       answer: response.choices[0].message.content,
       sources: relevantDocs.map(doc => ({
         content: doc.pageContent,
-        metadata: doc.metadata
-      }))
+        metadata: doc.metadata,
+      })),
     });
-
   } catch (error) {
     console.error('Chat error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });

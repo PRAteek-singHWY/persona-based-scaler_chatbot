@@ -1,19 +1,11 @@
 import { NextResponse } from 'next/server';
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { QdrantClient } from "@qdrant/js-client-rest";
-import path from 'path';
-import fs from 'fs/promises';
-import { tmpdir } from 'os';
+import { OpenAIEmbeddings } from "@langchain/openai";
+import pdf from 'pdf-parse';
 
-// Polyfills for server-side PDF parsing
-if (typeof global.DOMMatrix === 'undefined') global.DOMMatrix = class {};
-if (typeof global.ImageData === 'undefined') global.ImageData = class {};
-
-// Static imports to force bundling on Vercel
-import * as pdf from 'pdf-parse';
-import officeParser from 'officeparser';
-import { HuggingFaceTransformersEmbeddings } from "@langchain/community/embeddings/huggingface_transformers";
+export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 export async function POST(req) {
   try {
@@ -24,85 +16,53 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Save file to a temporary location
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const tempPath = path.join(tmpdir(), `${Date.now()}-${file.name}`);
-    await fs.writeFile(tempPath, buffer);
 
-    // 1. Load and Parse
-    console.log("Starting PDF parsing phase...");
-    let text = "";
-    
-    try {
-      console.log("Attempting officeparser parsing...");
-      text = await officeParser.parseOffice(buffer);
-      console.log(`Officeparser success. Text length: ${text?.length || 0}`);
-    } catch (officeError) {
-      console.error("Officeparser failed:", officeError.message);
-      
-      console.log("Attempting pdf-parse fallback...");
-      try {
-        const parse = typeof pdf === 'function' ? pdf : (pdf.default || pdf);
-        const data = await parse(buffer);
-        text = data.text;
-        console.log(`Pdf-parse success. Text length: ${text?.length || 0}`);
-      } catch (pdfError) {
-        console.error("Pdf-parse fallback failed:", pdfError.message);
-        throw new Error("All PDF parsing methods failed. Please try a different document.");
-      }
-    }
+    const data = await pdf(buffer);
+    const text = data.text;
 
     if (!text || text.trim().length === 0) {
-      throw new Error("No text extracted from PDF");
+      return NextResponse.json({ error: 'No text extracted from PDF' }, { status: 400 });
     }
 
-    // 2. Chunking
-    console.log("Splitting text...");
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200,
     });
-    const docs = await textSplitter.createDocuments([text]);
-    console.log(`Text split into ${docs.length} chunks.`);
+    const docs = await textSplitter.createDocuments(
+      [text],
+      [{ source: file.name }]
+    );
 
-    // 3. Embeddings (Local - No OpenAI Key Needed)
-    console.log("Initializing local embeddings...");
-    const embeddings = new HuggingFaceTransformersEmbeddings({
-      model: "Xenova/all-MiniLM-L6-v2",
+    const embeddings = new OpenAIEmbeddings({
+      apiKey: process.env.OPENAI_API_KEY,
+      model: "text-embedding-3-small",
     });
-    console.log("Embeddings initialized.");
 
-    // 4. Vector Store (Qdrant)
-    console.log("Connecting to Qdrant...");
     const qdrantUrl = process.env.QDRANT_URL;
     const qdrantApiKey = process.env.QDRANT_API_KEY;
-    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-local";
+    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-rag";
 
-    if (!qdrantUrl) throw new Error("QDRANT_URL is not set");
+    if (!qdrantUrl) {
+      return NextResponse.json({ error: 'QDRANT_URL is not set' }, { status: 500 });
+    }
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json({ error: 'OPENAI_API_KEY is not set' }, { status: 500 });
+    }
 
-    console.log(`Storing in collection: ${collectionName}`);
     await QdrantVectorStore.fromDocuments(docs, embeddings, {
       url: qdrantUrl,
       apiKey: qdrantApiKey,
-      collectionName: collectionName,
+      collectionName,
     });
-    console.log("Indexing completed.");
 
-    // Cleanup temp file
-    await fs.unlink(tempPath);
-
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Indexing completed successfully',
-      chunksCount: docs.length
+      chunksCount: docs.length,
     });
-
   } catch (error) {
-    console.error('ULTIMATE ERROR LOG:', error);
-    if (error.stack) console.error('STACK TRACE:', error.stack);
-    return NextResponse.json({ 
-      error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
-    }, { status: 500 });
+    console.error('Upload error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
