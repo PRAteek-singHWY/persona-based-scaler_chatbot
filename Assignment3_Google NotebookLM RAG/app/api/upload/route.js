@@ -23,9 +23,27 @@ export async function POST(req) {
     await fs.writeFile(tempPath, buffer);
 
     // 1. Load and Parse
-    console.log("Loading PDF...");
-    const officeParser = await import("officeparser");
-    const text = await officeParser.parseOffice(buffer);
+    console.log("Loading PDF with pdfjs-dist...");
+    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.js");
+    
+    const data = new Uint8Array(buffer);
+    const loadingTask = pdfjs.getDocument({
+      data,
+      useSystemFonts: true,
+      disableFontFace: true,
+      verbosity: 0
+    });
+    
+    const pdf = await loadingTask.promise;
+    let text = "";
+    
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const strings = content.items.map((item) => item.str);
+      text += strings.join(" ") + "\n";
+    }
+    
     console.log(`PDF Parsed. Text length: ${text.length}`);
 
     // 2. Chunking
