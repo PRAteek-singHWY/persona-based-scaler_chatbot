@@ -1,0 +1,63 @@
+Retrieving project…
+Deploying prateek-singhs-projects-0302c9b0/google-notebooklm-rag
+Inspect: https://vercel.com/prateek-singhs-projects-0302c9b0/google-notebooklm-rag/1S53KixjeoUyFXQ2hTQbccCLVLNP [2s]
+Production: https://google-notebooklm-pq5dbhlha-prateek-singhs-projects-0302c9b0.vercel.app [2s]
+https://google-notebooklm-pq5dbhlha-prateek-singhs-projects-0302c9b0.vercel.appBuilding...
+Building...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Downloading 36 deployment files...
+Building: Restored build cache from previous deployment (8T81Vu323zCYCgy8t4UKm4rpdnVH)
+Building: Running "vercel build"
+Building: Vercel CLI 51.6.1
+Building: Installing dependencies...
+Building: added 12 packages, and changed 3 packages in 2s
+Building: 176 packages are looking for funding
+Building: run `npm fund` for details
+Building: Detected Next.js version: 16.2.5
+Building: Running "npm run build"
+Building: > google-notebooklm-rag@0.1.0 build
+Building: > next build
+Building: Applying modifyConfig from Vercel
+Building: ▲ Next.js 16.2.5 (Turbopack)
+Building: - Environments: .env
+Building: Creating an optimized production build ...
+Building: Turbopack build encountered 2 warnings:
+Building: ./app/api/chat/route.js:15:57
+Building: Module not found: Can't resolve '@langchain/community/embeddings/hf_transformers'
+Building: 13 | ...
+Building: 14 | ...
+Building: > 15 | ...ings } = await import("@langchain/community/embeddings/hf_transformers");
+Building: |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Building: 16 | ...nsformersEmbeddings({
+Building: 17 | ...
+Building: 18 | ...
+Building: https://nextjs.org/docs/messages/module-not-found
+Building: ./app/api/upload/route.js:70:57
+Building: Module not found: Can't resolve '@langchain/community/embeddings/hf_transformers'
+Building: 68 | ...ey Needed)
+Building: 69 | ...dings...");
+Building: > 70 | ...ings } = await import("@langchain/community/embeddings/hf_transformers");
+Building: |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Building: 71 | ...nsformersEmbeddings({
+Building: 72 | ...
+Building: 73 | ...
+Building: https://nextjs.org/docs/messages/module-not-found
+Building: > Build error occurred
+Building: Error: Turbopack build failed with 1 errors:
+Building: ./app/api/upload/route.js:14:1
+Building: Export default doesn't exist in target module
+Building: 12 |
+Building: 13 | // Static imports to force bundling on Vercel
+Building: > 14 | import pdf from 'pdf-parse';
+Building: | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Building: 15 | import officeParser from 'officeparser';
+Building: 16 |
+Building: 17 | export async function POST(req) {
+Building: The export default was not found in module [project]/node_modules/pdf-parse/dist/pdf-parse/esm/index.js [app-route] (ecmascript).
+Building: Did you mean to import Rectangle?
+Building: All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+Building: at <unknown> (./app/api/upload/route.js:14:1)
+Building: Error: Command "npm run build" exited with 1
+Error: Command "npm run build" exited with 1

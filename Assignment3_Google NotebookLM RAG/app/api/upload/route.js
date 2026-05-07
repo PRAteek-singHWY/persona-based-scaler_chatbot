@@ -6,6 +6,15 @@ import path from 'path';
 import fs from 'fs/promises';
 import { tmpdir } from 'os';
 
+// Polyfills for server-side PDF parsing
+if (typeof global.DOMMatrix === 'undefined') global.DOMMatrix = class {};
+if (typeof global.ImageData === 'undefined') global.ImageData = class {};
+
+// Static imports to force bundling on Vercel
+import * as pdf from 'pdf-parse';
+import officeParser from 'officeparser';
+import { HuggingFaceTransformersEmbeddings } from "@langchain/community/embeddings/huggingface_transformers";
+
 export async function POST(req) {
   try {
     const formData = await req.formData();
@@ -27,22 +36,14 @@ export async function POST(req) {
     
     try {
       console.log("Attempting officeparser parsing...");
-      const officeParser = await import("officeparser");
       text = await officeParser.parseOffice(buffer);
       console.log(`Officeparser success. Text length: ${text?.length || 0}`);
     } catch (officeError) {
       console.error("Officeparser failed:", officeError.message);
       
       console.log("Attempting pdf-parse fallback...");
-      if (typeof global.DOMMatrix === 'undefined') global.DOMMatrix = class {};
-      if (typeof global.ImageData === 'undefined') global.ImageData = class {};
-      
       try {
-        const { createRequire } = await import('module');
-        const require = createRequire(import.meta.url);
-        const pdfModule = require('pdf-parse');
-        const parse = typeof pdfModule === 'function' ? pdfModule : (pdfModule.default || pdfModule);
-        
+        const parse = typeof pdf === 'function' ? pdf : (pdf.default || pdf);
         const data = await parse(buffer);
         text = data.text;
         console.log(`Pdf-parse success. Text length: ${text?.length || 0}`);
@@ -67,7 +68,6 @@ export async function POST(req) {
 
     // 3. Embeddings (Local - No OpenAI Key Needed)
     console.log("Initializing local embeddings...");
-    const { HuggingFaceTransformersEmbeddings } = await import("@langchain/community/embeddings/hf_transformers");
     const embeddings = new HuggingFaceTransformersEmbeddings({
       model: "Xenova/all-MiniLM-L6-v2",
     });
