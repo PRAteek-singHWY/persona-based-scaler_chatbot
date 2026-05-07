@@ -24,8 +24,7 @@
     "lucide-react": "latest",
     "next": "16.2.5",
     "openai": "latest",
-    "pdf-parse": "latest",
-    "pdfjs-dist": "^3.11.174",
+    "pdf-parse": "^2.4.5",
     "react": "latest",
     "react-dom": "latest"
   },

@@ -1,7 +1,11 @@
+// Polyfill for pdf-parse in Node.js environment
+if (typeof global.DOMMatrix === 'undefined') {
+  global.DOMMatrix = class {};
+}
+
 import { NextResponse } from 'next/server';
-import { OpenAIEmbeddings } from "@langchain/openai";
-import { QdrantVectorStore } from "@langchain/qdrant";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { QdrantVectorStore } from "@langchain/qdrant";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import path from 'path';
 import fs from 'fs/promises';
@@ -23,27 +27,10 @@ export async function POST(req) {
     await fs.writeFile(tempPath, buffer);
 
     // 1. Load and Parse
-    console.log("Loading PDF with pdfjs-dist...");
-    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.js");
-    
-    const data = new Uint8Array(buffer);
-    const loadingTask = pdfjs.getDocument({
-      data,
-      useSystemFonts: true,
-      disableFontFace: true,
-      verbosity: 0
-    });
-    
-    const pdf = await loadingTask.promise;
-    let text = "";
-    
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      const strings = content.items.map((item) => item.str);
-      text += strings.join(" ") + "\n";
-    }
-    
+    console.log("Loading PDF with pdf-parse...");
+    const pdf = (await import("pdf-parse")).default;
+    const data = await pdf(buffer);
+    const text = data.text;
     console.log(`PDF Parsed. Text length: ${text.length}`);
 
     // 2. Chunking
@@ -59,7 +46,7 @@ export async function POST(req) {
     console.log("Initializing local embeddings...");
     const { HuggingFaceTransformersEmbeddings } = await import("@langchain/community/embeddings/hf_transformers");
     const embeddings = new HuggingFaceTransformersEmbeddings({
-      modelName: "Xenova/all-MiniLM-L6-v2",
+      model: "Xenova/all-MiniLM-L6-v2",
     });
     console.log("Embeddings initialized.");
 

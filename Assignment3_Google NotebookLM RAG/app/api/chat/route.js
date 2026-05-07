@@ -14,7 +14,7 @@ export async function POST(req) {
     // 1. Setup Vector Store
     const { HuggingFaceTransformersEmbeddings } = await import("@langchain/community/embeddings/hf_transformers");
     const embeddings = new HuggingFaceTransformersEmbeddings({
-      modelName: "Xenova/all-MiniLM-L6-v2",
+      model: "Xenova/all-MiniLM-L6-v2",
     });
 
     const qdrantUrl = process.env.QDRANT_URL;
