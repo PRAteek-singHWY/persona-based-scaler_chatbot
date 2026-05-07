@@ -24,9 +24,8 @@ export async function POST(req) {
 
     // 1. Load and Parse
     console.log("Loading PDF...");
-    const pdf = (await import("pdf-parse")).default;
-    const data = await pdf(buffer);
-    const text = data.text;
+    const officeParser = (await import("officeparser")).default;
+    const text = await officeParser.parseUndefinedAsync(buffer);
     console.log(`PDF Parsed. Text length: ${text.length}`);
 
     // 2. Chunking

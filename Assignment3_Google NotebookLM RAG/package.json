@@ -23,6 +23,7 @@
     "langchain": "latest",
     "lucide-react": "latest",
     "next": "16.2.5",
+    "officeparser": "^6.1.1",
     "openai": "latest",
     "pdf-parse": "latest",
     "react": "latest",
