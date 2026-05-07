@@ -1,8 +1,3 @@
-// Polyfill for pdf-parse in Node.js environment
-if (typeof global.DOMMatrix === 'undefined') {
-  global.DOMMatrix = class {};
-}
-
 import { NextResponse } from 'next/server';
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { QdrantVectorStore } from "@langchain/qdrant";
@@ -20,7 +15,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Save file to a temporary location for LangChain PDFLoader
+    // Save file to a temporary location
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const tempPath = path.join(tmpdir(), `${Date.now()}-${file.name}`);
@@ -28,7 +23,16 @@ export async function POST(req) {
 
     // 1. Load and Parse
     console.log("Loading PDF with pdf-parse...");
-    const pdf = (await import("pdf-parse")).default;
+    
+    // Polyfill INSIDE the function to avoid build-time errors
+    if (typeof global.DOMMatrix === 'undefined') {
+      global.DOMMatrix = class {};
+    }
+    
+    const { createRequire } = await import('module');
+    const require = createRequire(import.meta.url);
+    const pdf = require('pdf-parse');
+    
     const data = await pdf(buffer);
     const text = data.text;
     console.log(`PDF Parsed. Text length: ${text.length}`);
