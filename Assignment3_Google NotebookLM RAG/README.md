@@ -55,5 +55,5 @@ npm run dev
 
 ## Deployment
 The project is ready to be deployed on **Vercel**.
-- **Live Link**: [https://assignment-3-notebooklm-rag.vercel.app](https://assignment-3-notebooklm-rag.vercel.app) (Placeholder - Replace with your actual deployment)
+- **Live Link**: [https://google-notebooklm-rag.vercel.app](https://google-notebooklm-rag.vercel.app)
 - **Repository**: [https://github.com/PRAteek-singHWY/persona-based-scaler_chatbot](https://github.com/PRAteek-singHWY/persona-based-scaler_chatbot)

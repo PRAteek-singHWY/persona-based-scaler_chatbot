@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import path from 'path';
 import fs from 'fs/promises';

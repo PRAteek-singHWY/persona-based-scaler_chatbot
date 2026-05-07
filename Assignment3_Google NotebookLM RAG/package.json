@@ -10,10 +10,22 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@langchain/groq": "^1.2.0",
+    "@langchain/community": "latest",
+    "@langchain/core": "latest",
+    "@langchain/groq": "latest",
+    "@langchain/openai": "latest",
+    "@langchain/qdrant": "latest",
+    "@langchain/textsplitters": "^1.0.1",
+    "@qdrant/js-client-rest": "latest",
+    "axios": "latest",
+    "framer-motion": "latest",
+    "langchain": "latest",
+    "lucide-react": "latest",
     "next": "16.2.5",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "openai": "latest",
+    "pdf-parse": "latest",
+    "react": "latest",
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
