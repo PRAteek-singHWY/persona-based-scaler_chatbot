@@ -3,3 +3,6 @@ Resolving deployment "google-notebooklm-rag.vercel.app"
 Streaming logs for deployment dpl_81Lf3zBDKXvU4DbVhqARDW8METqR starting from 18:13:30.12
 
 waiting for new logs...
+WARNING! Command automatically interrupted after 5 minutes.
+
+Error: An unexpected error occurred in logs: AbortError: The user aborted a request.

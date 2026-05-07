@@ -106,7 +106,7 @@ export default function Home() {
           <div className="p-2 bg-emerald-600 rounded-xl shadow-lg shadow-emerald-500/20">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-yellow-400">
+          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-green-500 to-yellow-400">
             NotebookLM RAG
           </h1>
         </div>
