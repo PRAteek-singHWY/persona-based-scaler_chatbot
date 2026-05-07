@@ -24,14 +24,15 @@ export async function POST(req) {
     // 1. Load and Parse
     console.log("Loading PDF with pdf-parse...");
     
-    // Polyfill INSIDE the function to avoid build-time errors
-    if (typeof global.DOMMatrix === 'undefined') {
-      global.DOMMatrix = class {};
-    }
+    // Polyfills
+    if (typeof global.DOMMatrix === 'undefined') global.DOMMatrix = class {};
+    if (typeof global.ImageData === 'undefined') global.ImageData = class {};
     
     const { createRequire } = await import('module');
     const require = createRequire(import.meta.url);
-    const pdf = require('pdf-parse');
+    
+    // Use the direct library path which is often more stable for bundling
+    const pdf = require('pdf-parse/lib/pdf-parse.js');
     
     const data = await pdf(buffer);
     const text = data.text;
