@@ -15,7 +15,7 @@ This is a full-stack RAG (Retrieval-Augmented Generation) application inspired b
 - **Backend**: Next.js API Routes.
 - **Orchestration**: LangChain.js.
 - **LLM**: Groq (Llama 3.3 70B).
-- **Embeddings**: OpenAI `text-embedding-3-large`.
+- **Embeddings**: Local (Transformers.js - `all-MiniLM-L6-v2`) - **No OpenAI Key Required**.
 - **Vector Database**: Qdrant.
 
 ## Setup Instructions

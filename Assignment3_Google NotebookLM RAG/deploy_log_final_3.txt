@@ -1,0 +1,24 @@
+Retrieving project…
+Deploying prateek-singhs-projects-0302c9b0/google-notebooklm-rag
+Uploading [--------------------] (0.0B/2.1KB)
+Uploading [========------------] (897.0B/2.1KB)
+Uploading [====================] (2.1KB/2.1KB)
+Inspect: https://vercel.com/prateek-singhs-projects-0302c9b0/google-notebooklm-rag/C4LXLbQ8zJJmkGCMojb6YwAbfApJ [2s]
+Production: https://google-notebooklm-slfgq4u81-prateek-singhs-projects-0302c9b0.vercel.app [2s]
+https://google-notebooklm-slfgq4u81-prateek-singhs-projects-0302c9b0.vercel.appBuilding...
+Building...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Previous build caches not available.
+Building: Downloading 28 deployment files...
+Building: Running "vercel build"
+Building: Vercel CLI 51.6.1
+Building: Installing dependencies...
+Building: npm error code ETARGET
+Building: npm error notarget No matching version found for @langchain/qdrant@^0.2.2.
+Building: npm error notarget In most cases you or one of your dependencies are requesting
+Building: npm error notarget a package version that doesn't exist.
+Building: npm error A complete log of this run can be found in: /vercel/.npm/_logs/2026-05-07T11_34_46_930Z-debug-0.log
+Building: Error: Command "npm install" exited with 1
+Error: Command "npm install" exited with 1

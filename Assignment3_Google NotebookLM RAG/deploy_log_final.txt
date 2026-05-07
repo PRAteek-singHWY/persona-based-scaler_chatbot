@@ -1,0 +1,50 @@
+Retrieving project…
+Deploying prateek-singhs-projects-0302c9b0/google-notebooklm-rag
+Uploading [--------------------] (0.0B/2.8KB)
+Uploading [========------------] (1.1KB/2.8KB)
+Uploading [====================] (2.8KB/2.8KB)
+Inspect: https://vercel.com/prateek-singhs-projects-0302c9b0/google-notebooklm-rag/8JBJrkfn9vcFxepzjBzWxHjvx7sj [3s]
+Production: https://google-notebooklm-6bpj1qifm-prateek-singhs-projects-0302c9b0.vercel.app [3s]
+https://google-notebooklm-6bpj1qifm-prateek-singhs-projects-0302c9b0.vercel.appBuilding...
+Building...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Previous build caches not available.
+Building: Downloading 25 deployment files...
+Building: Running "vercel build"
+Building: Vercel CLI 51.6.1
+Building: Installing dependencies...
+Building: npm error code ERESOLVE
+Building: npm error ERESOLVE unable to resolve dependency tree
+Building: npm error
+Building: npm error While resolving: google-notebooklm-rag@0.1.0
+Building: npm error Found: @langchain/core@1.1.45
+Building: npm error node_modules/@langchain/core
+Building: npm error   peer @langchain/core@"^1.1.45" from @langchain/anthropic@1.3.29
+Building: npm error   node_modules/@langchain/anthropic
+Building: npm error     peerOptional @langchain/anthropic@"*" from langchain@0.3.37
+Building: npm error     node_modules/langchain
+Building: npm error       langchain@"^0.3.19" from the root project
+Building: npm error   peer @langchain/core@"^1.0.0" from @langchain/aws@1.3.6
+Building: npm error   node_modules/@langchain/aws
+Building: npm error     peerOptional @langchain/aws@"*" from langchain@0.3.37
+Building: npm error     node_modules/langchain
+Building: npm error       langchain@"^0.3.19" from the root project
+Building: npm error   2 more (@langchain/cerebras, @langchain/cohere)
+Building: npm error
+Building: npm error Could not resolve dependency:
+Building: npm error peer @langchain/core@">=0.3.58 <0.4.0" from langchain@0.3.37
+Building: npm error node_modules/langchain
+Building: npm error   langchain@"^0.3.19" from the root project
+Building: npm error
+Building: npm error Fix the upstream dependency conflict, or retry
+Building: npm error this command with --force or --legacy-peer-deps
+Building: npm error to accept an incorrect (and potentially broken) dependency resolution.
+Building: npm error
+Building: npm error
+Building: npm error For a full report see:
+Building: npm error /vercel/.npm/_logs/2026-05-07T11_32_40_786Z-eresolve-report.txt
+Building: npm error A complete log of this run can be found in: /vercel/.npm/_logs/2026-05-07T11_32_40_786Z-debug-0.log
+Building: Error: Command "npm install" exited with 1
+Error: Command "npm install" exited with 1

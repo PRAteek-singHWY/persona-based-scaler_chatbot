@@ -34,16 +34,16 @@ export async function POST(req) {
     });
     const docs = await textSplitter.splitDocuments(rawDocs);
 
-    // 3. Embeddings
-    const embeddings = new OpenAIEmbeddings({
-      modelName: "text-embedding-3-large",
-      openAIApiKey: process.env.OPENAI_API_KEY,
+    // 3. Embeddings (Local - No OpenAI Key Needed)
+    const { HuggingFaceTransformersEmbeddings } = await import("@langchain/community/embeddings/hf_transformers");
+    const embeddings = new HuggingFaceTransformersEmbeddings({
+      modelName: "Xenova/all-MiniLM-L6-v2",
     });
 
     // 4. Vector Store (Qdrant)
-    const qdrantUrl = process.env.QDRANT_URL || "http://localhost:6333";
+    const qdrantUrl = process.env.QDRANT_URL;
     const qdrantApiKey = process.env.QDRANT_API_KEY;
-    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-rag";
+    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-local";
 
     // Ensure collection exists (optional with fromDocuments but good practice)
     const client = new QdrantClient({

@@ -1,0 +1,41 @@
+Retrieving project…
+Deploying prateek-singhs-projects-0302c9b0/google-notebooklm-rag
+Uploading [--------------------] (0.0B/2.5KB)
+Uploading [==========----------] (1.4KB/2.5KB)
+Uploading [====================] (2.5KB/2.5KB)
+Inspect: https://vercel.com/prateek-singhs-projects-0302c9b0/google-notebooklm-rag/3MUCamQeqGVS83UBvCdQ3pjmfVDa [2s]
+Production: https://google-notebooklm-p8xrrnz17-prateek-singhs-projects-0302c9b0.vercel.app [2s]
+https://google-notebooklm-p8xrrnz17-prateek-singhs-projects-0302c9b0.vercel.appBuilding...
+Building...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Previous build caches not available.
+Building: Downloading 29 deployment files...
+Building: Running "vercel build"
+Building: Vercel CLI 51.6.1
+Building: Installing dependencies...
+Building: npm warn deprecated uuid@10.0.0: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+Building: npm warn deprecated uuid@10.0.0: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+Building: npm warn deprecated next@15.1.0: This version has a security vulnerability. Please upgrade to a patched version. See https://nextjs.org/blog/CVE-2025-66478 for more details.
+Building: added 395 packages in 29s
+Building: 153 packages are looking for funding
+Building: run `npm fund` for details
+Building: Detected Next.js version: 15.1.0
+Building: Running "npm run build"
+Building: > google-notebooklm-rag@0.1.0 build
+Building: > next build
+Building: Attention: Next.js now collects completely anonymous telemetry regarding usage.
+Building: This information is used to shape Next.js' roadmap and prioritize features.
+Building: You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+Building: https://nextjs.org/telemetry
+Building: ▲ Next.js 15.1.0
+Building: - Environments: .env
+Building: Creating an optimized production build ...
+Building: Failed to compile.
+Building: ./app/api/upload/route.js
+Building: Module not found: Package path ./text_splitter is not exported from package /vercel/path0/node_modules/langchain (see exports field in /vercel/path0/node_modules/langchain/package.json)
+Building: https://nextjs.org/docs/messages/module-not-found
+Building: > Build failed because of webpack errors
+Building: Error: Command "npm run build" exited with 1
+Error: Command "npm run build" exited with 1
