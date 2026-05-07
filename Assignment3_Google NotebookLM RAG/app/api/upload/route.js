@@ -22,21 +22,39 @@ export async function POST(req) {
     await fs.writeFile(tempPath, buffer);
 
     // 1. Load and Parse
-    console.log("Loading PDF with pdf-parse...");
+    console.log("Starting PDF parsing phase...");
+    let text = "";
     
-    // Polyfills
-    if (typeof global.DOMMatrix === 'undefined') global.DOMMatrix = class {};
-    if (typeof global.ImageData === 'undefined') global.ImageData = class {};
-    
-    const { createRequire } = await import('module');
-    const require = createRequire(import.meta.url);
-    
-    // Use the direct library path which is often more stable for bundling
-    const pdf = require('pdf-parse/lib/pdf-parse.js');
-    
-    const data = await pdf(buffer);
-    const text = data.text;
-    console.log(`PDF Parsed. Text length: ${text.length}`);
+    try {
+      console.log("Attempting officeparser parsing...");
+      const officeParser = await import("officeparser");
+      text = await officeParser.parseOffice(buffer);
+      console.log(`Officeparser success. Text length: ${text?.length || 0}`);
+    } catch (officeError) {
+      console.error("Officeparser failed:", officeError.message);
+      
+      console.log("Attempting pdf-parse fallback...");
+      if (typeof global.DOMMatrix === 'undefined') global.DOMMatrix = class {};
+      if (typeof global.ImageData === 'undefined') global.ImageData = class {};
+      
+      try {
+        const { createRequire } = await import('module');
+        const require = createRequire(import.meta.url);
+        const pdfModule = require('pdf-parse');
+        const parse = typeof pdfModule === 'function' ? pdfModule : (pdfModule.default || pdfModule);
+        
+        const data = await parse(buffer);
+        text = data.text;
+        console.log(`Pdf-parse success. Text length: ${text?.length || 0}`);
+      } catch (pdfError) {
+        console.error("Pdf-parse fallback failed:", pdfError.message);
+        throw new Error("All PDF parsing methods failed. Please try a different document.");
+      }
+    }
+
+    if (!text || text.trim().length === 0) {
+      throw new Error("No text extracted from PDF");
+    }
 
     // 2. Chunking
     console.log("Splitting text...");
@@ -80,7 +98,11 @@ export async function POST(req) {
     });
 
   } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('ULTIMATE ERROR LOG:', error);
+    if (error.stack) console.error('STACK TRACE:', error.stack);
+    return NextResponse.json({ 
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    }, { status: 500 });
   }
 }
