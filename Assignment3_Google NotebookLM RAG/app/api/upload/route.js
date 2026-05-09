@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { JinaEmbeddings } from "@langchain/community/embeddings/jina";
 import pdf from 'pdf-parse';
 
 export const runtime = 'nodejs';
@@ -35,20 +35,21 @@ export async function POST(req) {
       [{ source: file.name }]
     );
 
-    const embeddings = new OpenAIEmbeddings({
-      apiKey: process.env.OPENAI_API_KEY,
-      model: "text-embedding-3-small",
+    if (!process.env.JINA_API_KEY) {
+      return NextResponse.json({ error: 'JINA_API_KEY is not set' }, { status: 500 });
+    }
+
+    const embeddings = new JinaEmbeddings({
+      apiKey: process.env.JINA_API_KEY,
+      model: "jina-embeddings-v3",
     });
 
     const qdrantUrl = process.env.QDRANT_URL;
     const qdrantApiKey = process.env.QDRANT_API_KEY;
-    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-rag";
+    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-jina-v3";
 
     if (!qdrantUrl) {
       return NextResponse.json({ error: 'QDRANT_URL is not set' }, { status: 500 });
-    }
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({ error: 'OPENAI_API_KEY is not set' }, { status: 500 });
     }
 
     await QdrantVectorStore.fromDocuments(docs, embeddings, {

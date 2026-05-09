@@ -15,23 +15,25 @@ This is a full-stack RAG (Retrieval-Augmented Generation) application inspired b
 - **Backend**: Next.js API Routes.
 - **Orchestration**: LangChain.js.
 - **LLM**: Groq (Llama 3.3 70B).
-- **Embeddings**: Local (Transformers.js - `all-MiniLM-L6-v2`) - **No OpenAI Key Required**.
+- **Embeddings**: Jina AI (`jina-embeddings-v3`, 1024 dims) — free tier, no OpenAI key required.
 - **Vector Database**: Qdrant.
 
 ## Setup Instructions
 
 ### 1. Prerequisites
 - Node.js (v18+)
-- OpenAI API Key
+- Groq API Key (https://console.groq.com)
+- Jina API Key (https://jina.ai/embeddings)
 - Qdrant Instance (Local or Cloud)
 
 ### 2. Environment Variables
 Create a `.env` file in the root directory:
 ```env
-OPENAI_API_KEY=your_openai_api_key
-QDRANT_URL=http://localhost:6333
+GROQ_API_KEY=your_groq_api_key
+JINA_API_KEY=your_jina_api_key
+QDRANT_URL=https://your-cluster.cloud.qdrant.io
 QDRANT_API_KEY=your_qdrant_api_key
-QDRANT_COLLECTION=notebook-lm-rag
+QDRANT_COLLECTION=notebook-lm-jina-v3
 ```
 
 ### 3. Installation
@@ -48,7 +50,7 @@ npm run dev
 1. **Ingestion**: The user uploads a file via the web interface.
 2. **Parsing**: `PDFLoader` extracts text from PDFs.
 3. **Chunking**: Text is split using `RecursiveCharacterTextSplitter` with a chunk size of 1000 and overlap of 200 to maintain context across boundaries.
-4. **Embedding**: Each chunk is converted into a 3072-dimensional vector using OpenAI's `text-embedding-3-large`.
+4. **Embedding**: Each chunk is converted into a 1024-dimensional vector using Jina AI's `jina-embeddings-v3`.
 5. **Indexing**: Vectors are stored in a Qdrant collection.
 6. **Retrieval**: User queries are embedded and used to search the vector store for the top 5 most relevant chunks.
 7. **Generation**: The retrieved chunks are injected into the LLM prompt as context, instructing it to answer solely based on the provided material.

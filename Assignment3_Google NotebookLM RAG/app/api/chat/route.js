@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { OpenAIEmbeddings } from "@langchain/openai";
+import { JinaEmbeddings } from "@langchain/community/embeddings/jina";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { OpenAI } from "openai";
 
@@ -14,21 +14,21 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json({ error: 'OPENAI_API_KEY is not set' }, { status: 500 });
+    if (!process.env.JINA_API_KEY) {
+      return NextResponse.json({ error: 'JINA_API_KEY is not set' }, { status: 500 });
     }
     if (!process.env.GROQ_API_KEY) {
       return NextResponse.json({ error: 'GROQ_API_KEY is not set' }, { status: 500 });
     }
 
-    const embeddings = new OpenAIEmbeddings({
-      apiKey: process.env.OPENAI_API_KEY,
-      model: "text-embedding-3-small",
+    const embeddings = new JinaEmbeddings({
+      apiKey: process.env.JINA_API_KEY,
+      model: "jina-embeddings-v3",
     });
 
     const qdrantUrl = process.env.QDRANT_URL;
     const qdrantApiKey = process.env.QDRANT_API_KEY;
-    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-rag";
+    const collectionName = process.env.QDRANT_COLLECTION || "notebook-lm-jina-v3";
 
     const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
       url: qdrantUrl,
