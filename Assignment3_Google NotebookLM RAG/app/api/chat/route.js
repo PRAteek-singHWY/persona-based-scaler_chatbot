@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { JinaEmbeddings } from "@langchain/community/embeddings/jina";
+import { JinaEmbeddings } from "../../../lib/jina-embeddings.js";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { OpenAI } from "openai";
 

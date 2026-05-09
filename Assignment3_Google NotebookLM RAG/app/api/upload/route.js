@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { JinaEmbeddings } from "@langchain/community/embeddings/jina";
+import { JinaEmbeddings } from "../../../lib/jina-embeddings.js";
 import pdf from 'pdf-parse';
 
 export const runtime = 'nodejs';
